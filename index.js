@@ -16,7 +16,12 @@ bot.on("message", async (msg) => {
       {
         reply_markup: {
           keyboard: [
-            [{ text: "Fill out the form", web_app: { url: webAppUrl } }],
+            [
+              {
+                text: "Fill out the form",
+                web_app: { url: webAppUrl + "/form" },
+              },
+            ],
           ],
         },
       }
