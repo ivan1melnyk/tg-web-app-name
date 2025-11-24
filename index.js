@@ -15,7 +15,9 @@ bot.on("message", async (msg) => {
       "A button will appear below, fill out the form",
       {
         reply_markup: {
-          keyboard: [[{ text: "Fill out the form" }]],
+          keyboard: [
+            [{ text: "Fill out the form", web_app: { url: webAppUrl } }],
+          ],
         },
       }
     );
