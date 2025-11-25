@@ -42,7 +42,7 @@ bot.on("message", async (msg) => {
       await bot.sendMessage(chatId, "Thank you for your order!\n");
       await bot.sendMessage(
         chatId,
-        `Your address is ${data?.country} ${data?.city} ${data?.street}\n`
+        `Your address is ${data?.country}, ${data?.city}, ${data?.street}\n`
       );
 
       setTimeout(async () => {
