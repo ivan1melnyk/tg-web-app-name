@@ -34,15 +34,15 @@ bot.on("message", async (msg) => {
         ],
       },
     });
-  }
-
-  if (msg?.web_app_data?.data) {
+  } else if (msg?.web_app_data?.data) {
     try {
       const data = JSON.parse(msg.web_app_data.data);
+      console.log(data);
 
+      await bot.sendMessage(chatId, "Thank you for your order!\n");
       await bot.sendMessage(
         chatId,
-        f`Thank you for your order!\n Your adress is ${data?.country} ${data?.city} ${data?.street}\n`
+        `Your address is ${data?.country} ${data?.city} ${data?.street}\n`
       );
 
       setTimeout(async () => {
@@ -54,7 +54,7 @@ bot.on("message", async (msg) => {
     } catch (e) {
       console.log(e);
     }
+  } else {
+    await bot.sendMessage(chatId, "Received your message");
   }
-
-  await bot.sendMessage(chatId, "Received your message");
 });
