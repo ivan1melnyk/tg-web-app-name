@@ -2,7 +2,7 @@ const TelegramBot = require("node-telegram-bot-api");
 
 require("dotenv").config(); // Add this at the top of your file
 const token = process.env.TELEGRAM_BOT_TOKEN;
-const webAppUrl = "https://peaceful-dodol-c7fe60v.netlify.app/";
+const webAppUrl = "http://www.google.com/";
 const bot = new TelegramBot(token, { polling: true });
 
 bot.on("message", async (msg) => {
