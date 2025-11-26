@@ -1,9 +1,15 @@
 const TelegramBot = require("node-telegram-bot-api");
+const express = require("express");
+const cors = require("cors");
 
 require("dotenv").config(); // Add this at the top of your file
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const webAppUrl = "https://peaceful-dodol-c7fe60v.netlify.app";
 const bot = new TelegramBot(token, { polling: true });
+const app = express();
+
+app.use(express.json());
+app.use(cors());
 
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
@@ -58,3 +64,30 @@ bot.on("message", async (msg) => {
     await bot.sendMessage(chatId, "Received your message");
   }
 });
+
+app.post("/web-data", async (req, res) => {
+  const { queryId, products, totalPrice } = req.body;
+  try {
+    await bot.answerWebAppQuery(queryId, {
+      type: "article",
+      id: queryId,
+      title: "Order Confirmation",
+      input_message_content: {
+        message_text: `Thank you for your order!\nTotal price: ${totalPrice}`,
+      },
+    });
+    return res.status(200).json({});
+  } catch (e) {
+    await bot.answerWebAppQuery(queryId, {
+      type: "article",
+      id: queryId,
+      title: "failed to purchased the product",
+      input_message_content: {
+        message_text: `failed to purchased the product`,
+      },
+    });
+    return res.status(500).json({});
+  }
+});
+const PORT = 8000;
+app.listen(PORT, () => console.log("server started on PORT " + PORT));
