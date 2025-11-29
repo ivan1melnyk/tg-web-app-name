@@ -11,7 +11,7 @@ const Form = () => {
     const [country, setCountry] = useState('');
     const [city, setCity] = useState('');
     const [street, setStreet] = useState('');
-    const [house_number, setHouseNumber] = useState('');
+    const [post_code, setPostcode] = useState('');
 
     const [subject, setSubject] = useState('physical');
     const {tg} = useTelegram();
@@ -24,11 +24,11 @@ const Form = () => {
             country,
             city,
             street,
-            house_number,
+            post_code,
             subject
         }
         tg.sendData(JSON.stringify(data));  
-    }, [first_name, last_name, phone_number, country, city, street, house_number, subject])
+    }, [first_name, last_name, phone_number, country, city, street, post_code, subject])
 
     useEffect(() => {
         tg.onEvent('mainButtonClicked', onSendData)
@@ -75,8 +75,8 @@ const Form = () => {
         setStreet(e.target.value);
     }
 
-    const onChangeHouseNumber = (e) => {
-        setHouseNumber(e.target.value);
+    const onChangePostcode = (e) => {
+        setPostcode(e.target.value);
     }
 
     const onChangeSubject = (e) => {
@@ -94,7 +94,7 @@ const Form = () => {
             <input type="text" placeholder={'Country'} value={country} onChange={onChangeCountry}/>
             <input type="text" placeholder={'City'} value={city} onChange={onChangeCity}/>
             <input type="text" placeholder={'Street'} value={street} onChange={onChangeStreet}/>
-            <input type="text" placeholder={'apartment number, floor, etc'} value={house_number} onChange={onChangeHouseNumber}/>
+            <input type="text" placeholder={'Post code'} value={post_code} onChange={onChangePostcode}/>
             <select value={subject} onChange={onChangeSubject} className={'select'}>
                 <option value={'physical'}>Natural person</option>
                 <option value={'legal'}>Legal person</option>

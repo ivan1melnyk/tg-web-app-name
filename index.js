@@ -6,6 +6,9 @@ require("dotenv").config(); // Add this at the top of your file
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const webAppUrl = "https://peaceful-dodol-c7fe60v.netlify.app";
 const bot = new TelegramBot(token, { polling: true });
+const Recipient = require("./src/models/Recipient.js");
+const Adress = require("./src/models/Adress.js");
+const Commodity = require("./src/models/commodity.js");
 const app = express();
 
 app.use(express.json());
@@ -48,8 +51,24 @@ bot.on("message", async (msg) => {
       await bot.sendMessage(chatId, "Thank you for your order!\n");
       await bot.sendMessage(
         chatId,
-        `Your address is ${data?.country}, ${data?.city}, ${data?.street}\n`
+        `Delivery address: ${data?.country}, ${data?.city}, ${data?.street}\n`
       );
+      const adress = await Adress.create({
+        country: data?.country,
+        city: data?.city,
+        street: data?.street,
+        post_code: data?.post_code,
+      });
+      await bot.sendMessage(
+        chatId,
+        `Recipient: ${data?.first_name}, ${data?.last_name}, ${data?.phone_number}\n`
+      );
+      const recipient = await Recipient.create({
+        name: `${data?.first_name} ${data?.last_name}`,
+        email: data?.email,
+        username: data?.username,
+        phone_number: data?.phone_number,
+      });
 
       setTimeout(async () => {
         await bot.sendMessage(
