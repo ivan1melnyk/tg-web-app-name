@@ -73,7 +73,9 @@ app.post("/web-data", async (req, res) => {
       id: queryId,
       title: "Order Confirmation",
       input_message_content: {
-        message_text: `Thank you for your order!\nTotal price: ${totalPrice}`,
+        message_text: `Thank you for your order!\nTotal price: ${totalPrice}, ${products
+          .map((item) => item.title)
+          .join(", ")}`,
       },
     });
     return res.status(200).json({});
@@ -81,7 +83,7 @@ app.post("/web-data", async (req, res) => {
     await bot.answerWebAppQuery(queryId, {
       type: "article",
       id: queryId,
-      title: "failed to purchased the product",
+      title: "failed purchase",
       input_message_content: {
         message_text: `failed to purchased the product`,
       },
