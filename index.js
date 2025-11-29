@@ -6,13 +6,41 @@ require("dotenv").config(); // Add this at the top of your file
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const webAppUrl = "https://peaceful-dodol-c7fe60v.netlify.app";
 const bot = new TelegramBot(token, { polling: true });
-const Recipient = require("./src/models/Recipient.js");
-const Adress = require("./src/models/Adress.js");
-const Commodity = require("./src/models/commodity.js");
+const { sequelize } = require("./src/models/db.js");
+const { Adress, Recipient, Commodity } = require("./src/models/models.js");
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+
+async function createAdress(country, city, street, post_code) {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connection established");
+
+    const adress = await Adress.create({ country, city, street, post_code });
+    console.log("Model creation test passed");
+  } catch (error) {
+    console.error("Database connection failed:", error);
+  }
+}
+
+async function createRecipient(name, email, username, phone_number) {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connection established");
+
+    const recipient = await Recipient.create({
+      name,
+      email,
+      username,
+      phone_number,
+    });
+    console.log("Model creation test passed");
+  } catch (error) {
+    console.error("Database connection failed:", error);
+  }
+}
 
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
@@ -47,29 +75,12 @@ bot.on("message", async (msg) => {
     try {
       const data = JSON.parse(msg.web_app_data.data);
       console.log(data);
-
       await bot.sendMessage(chatId, "Thank you for your order!\n");
-      await bot.sendMessage(
-        chatId,
-        `Delivery address: ${data?.country}, ${data?.city}, ${data?.street}\n`
-      );
-      const adress = await Adress.create({
-        country: data?.country,
-        city: data?.city,
-        street: data?.street,
-        post_code: data?.post_code,
-      });
-      await bot.sendMessage(
-        chatId,
-        `Recipient: ${data?.first_name}, ${data?.last_name}, ${data?.phone_number}\n`
-      );
-      const recipient = await Recipient.create({
-        name: `${data?.first_name} ${data?.last_name}`,
-        email: data?.email,
-        username: data?.username,
-        phone_number: data?.phone_number,
-      });
 
+      await bot.sendMessage(chatId, `Delivery address: ${data?.country}, ${data?.city}, ${data?.street}\n Post code: ${data?.post_code}`);
+      await createAdress(data?.country, data?.city, data?.street, data?.post_code);
+      await bot.sendMessage( chatId, `Recipient: ${data?.first_name}, ${data?.last_name}, ${data?.phone_number}\n`);
+      await createRecipient(data?.first_name + " " + data?.last_name, data?.email, data?.username, data?.phone_number);
       setTimeout(async () => {
         await bot.sendMessage(
           chatId,
